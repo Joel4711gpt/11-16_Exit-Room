@@ -1,3 +1,63 @@
+const fallbackScene = {
+  background: "assets/images/room-background.jpg",
+  objects: [
+    {
+      id: "key",
+      image: "assets/images/key.png",
+      position: { top: "420px", left: "120px" },
+    },
+    {
+      id: "clue1",
+      image: "assets/images/clue1.png",
+      position: { top: "180px", left: "520px" },
+    },
+    {
+      id: "clue2",
+      image: "assets/images/clue2.png",
+      position: { top: "260px", left: "340px" },
+    },
+    {
+      id: "door",
+      image: "assets/images/door-closed.png",
+      position: { top: "120px", left: "60px" },
+    },
+  ],
+  riddles: [
+    {
+      id: 1,
+      riddleText: "Rätsel 1: Finde den Schlüssel und klicke ihn an.",
+      clueImage: "assets/images/key.png",
+      correctObjectId: "key",
+    },
+    {
+      id: 2,
+      riddleText: "Rätsel 2: Öffne Hinweis 1, indem du auf das Bild klickst.",
+      clueImage: "assets/images/clue1.png",
+      correctObjectId: "clue1",
+    },
+    {
+      id: 3,
+      riddleText:
+        "Rätsel 3: Der zweite Hinweis ist jetzt sichtbar. Tippe auf Hinweis 2.",
+      clueImage: "assets/images/clue2.png",
+      correctObjectId: "clue2",
+    },
+    {
+      id: 4,
+      riddleText: "Rätsel 4: Nutze den Schlüssel und entriegele die Tür.",
+      clueImage: "assets/images/door-closed.png",
+      correctObjectId: "door",
+    },
+    {
+      id: 5,
+      riddleText:
+        "Rätsel 5: Die Tür ist entriegelt. Klicke sie erneut, um zu entkommen!",
+      clueImage: "assets/images/door-open.png",
+      correctObjectId: "door",
+    },
+  ],
+};
+
 const state = {
   totalTime: 60,
   remainingTime: 60,
@@ -37,17 +97,26 @@ function init() {
 }
 
 async function loadScene() {
-  const response = await fetch("scenes/scene1.json");
-  if (!response.ok) {
-    throw new Error(`HTTP-Status ${response.status}`);
+  try {
+    const response = await fetch("scenes/scene1.json", { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(`HTTP-Status ${response.status}`);
+    }
+    const scene = await response.json();
+    useScene(scene);
+  } catch (error) {
+    console.warn("Szene konnte nicht geladen werden, nutze Fallback:", error);
+    useScene(fallbackScene, true);
   }
-  const scene = await response.json();
-  state.scene = scene;
-  state.totalRiddles = scene.riddles.length;
-  applyScene(scene);
 }
 
-function applyScene(scene) {
+function useScene(scene, isFallback = false) {
+  state.scene = scene;
+  state.totalRiddles = scene.riddles.length;
+  applyScene(scene, isFallback);
+}
+
+function applyScene(scene, isFallback) {
   refs.background.src = scene.background;
   scene.objects.forEach((obj) => {
     const element = document.getElementById(obj.id);
@@ -55,7 +124,10 @@ function applyScene(scene) {
     element.style.top = obj.position.top;
     element.style.left = obj.position.left;
   });
-  refs.message.textContent = scene.riddles[0].riddleText;
+  const intro = isFallback
+    ? "Offline-Modus aktiv. "
+    : "";
+  refs.message.textContent = `${intro}${scene.riddles[0].riddleText}`;
 }
 
 function startGame() {
