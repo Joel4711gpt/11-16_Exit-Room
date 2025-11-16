@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Escape Room - Szene 1</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main id="game-container" aria-live="polite">
+      <img
+        id="room-background"
+        src="assets/images/room-background.jpg"
+        alt="Hintergrundbild eines geheimnisvollen Raums"
+      />
+
+      <button id="key" class="object" aria-label="Schlüssel">
+        <img src="assets/images/key.png" alt="Schlüssel" />
+      </button>
+
+      <button id="clue1" class="object" aria-label="Erster Hinweis">
+        <img src="assets/images/clue1.png" alt="Hinweis 1" />
+      </button>
+
+      <button id="clue2" class="object hidden" aria-label="Zweiter Hinweis">
+        <img src="assets/images/clue2.png" alt="Hinweis 2" />
+      </button>
+
+      <button id="door" class="object" aria-label="Tür">
+        <img src="assets/images/door-closed.png" alt="Tür" />
+      </button>
+
+      <section id="hud">
+        <div id="timer">⏱️ Zeit: <span id="time">60</span>s</div>
+        <div id="message" role="status">Finde den Schlüssel!</div>
+      </section>
+    </main>
+
+    <audio id="audio-tick" src="assets/audio/tick.mp3" preload="auto"></audio>
+    <audio id="audio-door-open" src="assets/audio/door_open.mp3" preload="auto"></audio>
+    <audio id="audio-success" src="assets/audio/success.mp3" preload="auto"></audio>
+    <audio id="audio-fail" src="assets/audio/fail.mp3" preload="auto"></audio>
+
+    <script src="app.js"></script>
+  </body>
+</html>
